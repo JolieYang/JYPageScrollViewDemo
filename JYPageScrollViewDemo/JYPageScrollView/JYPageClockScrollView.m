@@ -9,29 +9,25 @@
 #import "JYPageClockScrollView.h"
 #import "JYPageScrollView.h"
 
-@interface JYPageClockScrollView()<JYPageScrollViewDataSource,JYPageScrollViewDelegate,JYPageClockScrollViewDataSource> {
-    NSInteger _currentPageIndex;
+@interface JYPageClockScrollView()<JYPageScrollViewDataSource,JYPageScrollViewDelegate,JYPageClockScrollViewDataSource>
+@end
+
+@implementation JYPageClockScrollView {
+    JYPageScrollView *_pageScrollView;
+    UIPageControl *_pageControl;
+    NSTimer *_timer;
     NSInteger _totalPageCount;
     BOOL _openTimer;
 }
-@property (nonatomic, strong, nonnull) JYPageScrollView *pageScrollView;
-@property (nonatomic, nullable) UIPageControl *pageControl;
-@property (nonatomic, strong) NSTimer *timer;
-
-@end
-
-@implementation JYPageClockScrollView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self) {
         self = [super initWithFrame:frame];
         _showPageControl = YES;
-        self.pageScrollView = [[JYPageScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height) style:JYPageScrollViewStyleHorizontal];
         
-        self.pageScrollView.pageScrollDelegate = self;
-//        self.pageScrollView.delegate = self;
-        
-        [self addSubview:self.pageScrollView];
+        _pageScrollView = [[JYPageScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height) style:JYPageScrollViewStyleHorizontal];
+        _pageScrollView.pageScrollDelegate = self;
+        [self addSubview:_pageScrollView];
     }
     
     return self;
@@ -49,14 +45,13 @@
 - (void)setDataSource:(id<JYPageClockScrollViewDataSource>)dataSource {
     if (_dataSource != dataSource) {
         _dataSource = dataSource;
-        
-        self.pageScrollView.dataSource = _dataSource;
+        _pageScrollView.dataSource = _dataSource;
     }
 }
 
 #pragma mark JYPageScrollViewDelegate
 - (void)scrollViewDidEndPaging:(nonnull UIScrollView *)scrollView atIndex:(NSInteger)index {
-    if (index < 0 || index >= self.pageScrollView.totalPageCount) {
+    if (index < 0 || index >= _pageScrollView.totalPageCount) {
         // 异常
         return;
     }
@@ -123,7 +118,7 @@
     }
 }
 - (void)pagingNext {
-    [self.pageScrollView pagingNext];
+    [_pageScrollView pagingNext];
 }
 
 #pragma mark Timer Tool
@@ -132,21 +127,21 @@
         _openTimer = YES;
     }
     
-    if ([self.timer isValid]) { // 已经有定时器在执行
+    if ([_timer isValid]) { // 已经有定时器在执行
         [self pauseTimer];
-    } else if (!self.timer) {
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:self.clockInterval == 0 ? 1 : self.clockInterval target:self selector:@selector(pagingNext) userInfo:nil repeats:YES];
+    } else if (!_timer) {
+        _timer = [NSTimer scheduledTimerWithTimeInterval:self.clockInterval == 0 ? 1 : self.clockInterval target:self selector:@selector(pagingNext) userInfo:nil repeats:YES];
     }
-    [self.timer setFireDate:[NSDate dateWithTimeIntervalSinceNow:self.clockInterval]];
+    [_timer setFireDate:[NSDate dateWithTimeIntervalSinceNow:self.clockInterval]];
 }
 
 - (void)pauseTimer {
-    [self.timer setFireDate:[NSDate distantFuture]];
+    [_timer setFireDate:[NSDate distantFuture]];
 }
 
 - (void)closeTimer {
-    [self.timer invalidate];
-    self.timer = nil;
+    [_timer invalidate];
+    _timer = nil;
 }
 
 

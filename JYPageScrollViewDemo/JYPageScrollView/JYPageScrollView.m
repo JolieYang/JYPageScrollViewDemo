@@ -12,17 +12,16 @@
 #define  ScrollHeight self.frame.size.height
 
 
-@interface JYPageScrollView()<UIScrollViewDelegate, JYPageScrollViewDataSource, JYPageScrollViewDelegate> {
+@interface JYPageScrollView()<UIScrollViewDelegate, JYPageScrollViewDataSource, JYPageScrollViewDelegate>
+@end
+
+@implementation JYPageScrollView {
     NSInteger _totalPageCount;
     NSInteger _currentIndex;
     NSInteger _pageIndex;
     NSArray *_viewContainerArray;
     JYPageScrollViewStyle _pageScrollViewStyle;
 }
-
-@end
-
-@implementation JYPageScrollView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self) {
@@ -73,9 +72,6 @@
         if ([_pageScrollDelegate respondsToSelector:@selector(scrollView:DidGetPageCount:)]) {
             [_pageScrollDelegate scrollView:self DidGetPageCount:_totalPageCount];
         }
-//        if ([self.delegate respondsToSelector:@selector(scrollView:DidGetPageCount:)]) {
-//            [self.delegate scrollView:self DidGetPageCount:_totalPageCount];
-//        }
         if (_pageScrollViewStyle == JYPageScrollViewStyleHorizontal) {
             self.contentSize = CGSizeMake(ScrollWidth * (_totalPageCount > 1 ? 3 : 1), ScrollHeight);
         } else {
@@ -127,20 +123,12 @@
     if ([_pageScrollDelegate respondsToSelector:@selector(scrollViewWillBeginDragging:)]) {
         [_pageScrollDelegate scrollViewWillBeginDragging:scrollView];
     }
-    // replace
-//    if ([self.delegate respondsToSelector:@selector(scrollViewWillBeginDragging:)]) {
-//        [self.delegate scrollViewWillBeginDragging:scrollView];
-//    }
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if ([_pageScrollDelegate respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
         [_pageScrollDelegate scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
     }
-    // replace
-//    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
-//        [self.delegate scrollViewDidEndDragging:self willDecelerate:decelerate];
-//    }
 }
 
 
@@ -176,11 +164,6 @@
     if ([_pageScrollDelegate respondsToSelector:@selector(scrollViewDidEndPaging:atIndex:)] && _totalPageCount > 1) {
         [_pageScrollDelegate scrollViewDidEndPaging:self atIndex:_pageIndex];
     }
-    // replace
-    //    if ([self.delegate respondsToSelector:@selector(scrollViewDidEndPaging:atIndex:)] && _totalPageCount > 1) {
-    //        [self.delegate scrollViewDidEndPaging:self atIndex:_currentPageIndex];
-    //    }
-    
 }
 
 - (NSInteger)validArrayIndex:(NSInteger)index {
